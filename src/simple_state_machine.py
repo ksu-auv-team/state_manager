@@ -10,10 +10,11 @@ class Foo(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
         self.counter = 0
-
+		rospy.Publisher('chatter", String, queue_size=10)
+		rospy.init_node('talker', 
     def execute(self, userdata):
         rospy.loginfo('Executing state FOO')
-        if self.counter < 3:
+        if self.counter < 3000000:
             self.counter += 1
             return 'outcome1'
         else:
@@ -48,8 +49,13 @@ def main():
                                transitions={'outcome1':'FOO'})
 
     # Execute SMACH plan
-    outcome = sm.execute()
-
+    #outcome = sm.execute()
+    
+    sis = smach_ros.IntrospectionServer('smach_server', sm, '/SM_ROOT')
+    sis.start()
+    sm.execute()
+    rospy.spin()
+    sis.stop()
 
 
 if __name__ == '__main__':
