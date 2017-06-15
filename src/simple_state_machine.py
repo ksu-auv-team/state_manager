@@ -4,16 +4,22 @@ import roslib; #roslib.load_manifest('smach_tutorials')
 import rospy
 import smach
 import smach_ros
+from std_msgs.msg import String
 
 # define state Foo
 class Foo(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
         self.counter = 0
-		rospy.Publisher('chatter", String, queue_size=10)
-		rospy.init_node('talker', 
+        self.pub = rospy.Publisher('chatter', String, queue_size=10)
+        rate = rospy.Rate(10)
+
     def execute(self, userdata):
         rospy.loginfo('Executing state FOO')
+        hello_str = "state Foo %s" % rospy.get_time()
+        rospy.loginfo(hello_str)
+        self.pub.publish(hello_str)
+
         if self.counter < 3000000:
             self.counter += 1
             return 'outcome1'
@@ -25,9 +31,14 @@ class Foo(smach.State):
 class Bar(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['outcome1'])
+        self.pub = rospy.Publisher('chatter2', String, queue_size=10)
+        rate = rospy.Rate(10)
 
     def execute(self, userdata):
         rospy.loginfo('Executing state BAR')
+        bar_str = "state Bar"
+        rospy.loginfo(bar_str)
+        self.pub.publish(bar_str)
         return 'outcome1'
         
 
