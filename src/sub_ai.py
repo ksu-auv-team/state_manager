@@ -4,6 +4,7 @@ import roslib;
 import rospy
 import smach
 import smach_ros
+import threading
 from std_msgs.msg import String
 recieved = '0'
 
@@ -12,28 +13,40 @@ class start_gate(smach.State):
 
     def __init__(self):
         smach.State.__init__(self, outcomes=['start_gate_complete', 'start_gate_null'])
-        #self.pub = rospy.Publisher('start_gate_smach_pub', String, queue_size='10')
-        #rate = rospy.Rate(.5)
-        #self.sub = rospy.Subscriber("start_gate_smach_sub", String, self.callback)
-        #rospy.spin()
+        #data_recieved_status -=
+        self.pub = rospy.Publisher('start_gate_smach_pub', String, queue_size='10')
+        rate = rospy.Rate(.5)
 
     def callback(self, data):
         rospy.loginfo(rospy.get_caller_id() + ' %s', data.data)
+        global recieved
         recieved = data.data
         rospy.loginfo('callback Display data.data: %s', recieved)
         rospy.spin()
+        # if recieved == '1':
+        #     data_recieved_status = self.set()
+        # else:
+        #     rospy.spin()
 
     def execute(self, data):
         #rospy.loginfo('Executing state start_gate')
         #start_gate_String_pub = 'run_start_gate'
         #self.pub.publish(start_gate_String_pub)
-        self.sub = rospy.S
-        subscriber("start_gate_smach_sub", String, self.callback)
+        self.sub = rospy.Subscriber("start_gate_smach_sub", String, self.callback)
+        global recieved
+        rospy.loginfo('execute data: %s', recieved)
+
+        #data_recieved_status 
+        # if data_recieved_status == True:
+        #     return 'start_gate_complete'
+        # else:
+        #     data_recieved_status = self.wait()
+        #     rospy.loginfo('waiting for trigger')
+        #     return 'start_gate_null'
 
         if recieved == '0':
-            self.sub = rospy.Subscriber("start_gate_smach_sub", String, self.callback)
-            rospy.loginfo('execute data: %s', recieved)
             return 'start_gate_null'
+            #data_recieved_status = self.is_set()
             rospy.spin()
         else: 
             if recieved == '1':
