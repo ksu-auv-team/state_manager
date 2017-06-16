@@ -20,7 +20,7 @@ class Foo(smach.State):
         rospy.loginfo(hello_str)
         self.pub.publish(hello_str)
 
-        if self.counter < 3000000:
+        if self.counter < 30000000000:
             self.counter += 1
             return 'outcome1'
         else:
